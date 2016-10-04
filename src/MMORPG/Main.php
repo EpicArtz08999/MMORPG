@@ -24,14 +24,43 @@ class Main extends PluginBase implements Listener {
     public function onCommand(CommandSender $sender, Command $command, $label, array $args) {
         switch($command->getName()){
             case "class":
-                if(!isset($args[0])) {
-                    $player->sendMessage(TF::RED . "Usage: /class hero <type>");
-                }
-                if($args[0] == "hero"){
-                    $player->sendMessage("You are now a hero!");
-                }
-                if($args[0] == "villain"){
-                    $player->sendMessage("You are a Villian!");
+                switch(strtolower($args[0])){
+                case "start":
+                    switch(strtolower($args[1])) {
+                    case "hero":
+                        if($sender->hasPermission("class.chosen")) {
+                            $player->sendMessage(TF::RED . "You have already chosen a class");
+                    } else {
+                        $player->sendMessage(TF::GOLD . "You have joined the Realm as a" . TF::AQUA . "Hero");
+                        $player->sendMessage(TF::GREEN . "As a Wizard, you will recieve various items!");
+                        $weapon = Item::get(Item::STICK, 0, 1);
+                        $p->getInventory()->addItem($weapon);
+                        $this->getOwner()->getServer()->dispatchCommand(new ConsoleCommandSender(), "setuperm " . $sender->getName() . " class.chosen");
+                        $this->getOwner()->getServer()->dispatchCommand(new ConsoleCommandSender(), "setuperm " . $sender->getName() . " class.hero");
+                    }
+                    return true;
+                    break;
+                    
+                    case "villain":
+                        if($sender->hasPermission("class.chosen")) {
+                            $player->sendMessage(TF::RED . "You have chosen a Class already");
+                        } else {
+                            $p->sendMessage(TF:: AQUA . "You have joined the world as a VillaiN!!");
+                            $sword = Item::get(Item::IRON_SWORD, 0, 1);
+                            $p->getInventory()->addItem($sword);
+                            $this->getOwner()->getServer()->dispatchCommand(new ConsoleCommandSender(), "setuperm " . $sender->getName() . " class.chosen");
+                            $this->getOwner()->getServer()->dispatchCommand(new ConsoleCommandSender(), "setuperm " . $sender->getName() . " class.villain");
+                            return true;
+                            break;
+                        }
+                        break;
+                    case "warp":
+                        if($sender->hasPermission("class.chosen")){
+                            $player->sendMessage(TF::BLUE . "You have been teleported to the Realms!");
+                            $p->teleport($this->getOwner()->getServer()->getLevelByName($this->getOwner()->config->get("world"))->getSafeSpawn());
+                        } else {
+                            $player->sendMessage(TF::AQUA . "You have yet to choose a Class!");
+                        }
                 }
         }
     }
