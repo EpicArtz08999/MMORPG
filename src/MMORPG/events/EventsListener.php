@@ -32,7 +32,15 @@ class EventsListener implements Listener {
     public function getPlugin() {
         return $this->plugin;
     }
-    
+    public function onJoin(PlayerJoinEvent $event) {
+        $player = $event->getPlayer();
+        $player->sendMessage(TF::GOLD . "Welcome to" . Main::PREFIX . $player->getName());
+    }
+    public function onDeath(PlayerDeathEvent $event) {
+        $player = $event->getEntity();
+        $cause = $player->getLastDamageCause();
+        $event->setDeathMessage(null); // I'll work on death messages later
+    }
 
 }
 
