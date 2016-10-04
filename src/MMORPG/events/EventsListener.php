@@ -41,7 +41,37 @@ class EventsListener implements Listener {
         $cause = $player->getLastDamageCause();
         $event->setDeathMessage(null); // I'll work on death messages later
     }
-
-}
+    public function onHit(EntityDamageEvent $event) {
+        if($event instanceof EntityDamageByEntityEvent) {
+            $fight = $event->getEntity();
+            $damager = $event->getDamager();
+            if($fight instanceof Player && $damager instanceof Player) {
+                if($damager->getItemInHand()->getId() == Item::STICK) {
+                    if($damager->hasPermission("class.hero")) {
+                        if ($damager->getFood() >= 1) {
+                            $x = $hit->x;
+                            $y = $hit->y;
+                            $z = $hit->z;
+                            $event->setKnockBack(0.9);
+                            $event->setDamage(0.5);
+                            $level->addParticle(new CriticalParticle(new Vector3($x, $y, $z)), 5);
+                            $player->sendTip(TF::RED . "Oh mighty Hero!");
+                        }
+                    }
+                }elseif($damager->getItemInHand()->getId() == Item::SWORD) {
+                    if($damager->hasPermission("class.villain")) {
+                        if($damager->getFood () >= 1) {
+                            $x = $hit->x;
+                            $y = $hit->y;
+                            $z = $hit->z;
+                            $event->setKnockBack(0.6);
+                            $fight->setOnFire(5);
+                            $damager->sendPopup(TF::AQUA . "The VILLAIN has awakened!");
+                        }
+                    }
+            }
+          }   
+        }
+    }
 
 
